@@ -60,17 +60,6 @@ export function generate(filePath: string) {
     });
   }
 
-  console.log(JSON.stringify(entities, null, 2));
-  // const host = ts.createCompilerHost({
-  // 	allowJs: true,
-  // 	declaration: true,
-  // 	emitDeclarationOnly: true,
-  // });
-  //
-  // host.writeFile = (fileName, contents) => {
-  // 	console.log(fileName);
-  // 	console.log(contents);
-  // };
   const resultFile = ts.createSourceFile(
     "",
     "",
@@ -92,6 +81,36 @@ export function generate(filePath: string) {
 function makeValidationFunction(entities: Entity[]) {
   const functionDeclarations = entities.map((entity) => {
     const functionName = `validate${entity.name}`;
+
+    const membersArray = ts.factory.createArrayLiteralExpression(
+      entity.members.map((member) =>
+        ts.factory.createObjectLiteralExpression([
+          ts.factory.createPropertyAssignment(
+            ts.factory.createIdentifier("name"),
+            ts.factory.createStringLiteral(member.name),
+          ),
+          ts.factory.createPropertyAssignment(
+            ts.factory.createIdentifier("kind"),
+            ts.factory.createStringLiteral(member.kind),
+          ),
+        ]),
+      ),
+    );
+
+    // Create the return statement
+    const returnStatement = ts.factory.createReturnStatement(
+      ts.factory.createObjectLiteralExpression([
+        ts.factory.createPropertyAssignment(
+          ts.factory.createIdentifier("name"),
+          ts.factory.createStringLiteral(entity.name),
+        ),
+        ts.factory.createPropertyAssignment(
+          ts.factory.createIdentifier("members"),
+          membersArray,
+        ),
+      ]),
+    );
+
     return ts.factory.createFunctionDeclaration(
       undefined,
       undefined,
@@ -111,7 +130,7 @@ function makeValidationFunction(entities: Entity[]) {
             ),
           ]),
         ),
-        ts.factory.createReturnStatement(ts.factory.createTrue()),
+        returnStatement,
       ]),
     );
   });
