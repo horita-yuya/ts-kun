@@ -1,0 +1,23 @@
+{
+  "name": "ts-kun",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "main": "build/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./build/index.d.ts",
+        "default": "./build/index.js"
+      },
+      "require": {
+        "types": "./build/index.d.ts",
+        "default": "./build/index.js"
+      }
+    }
+  },
+  "types": "./src/generate.ts",
+  "scripts": {
+    "dev": "tsc -w"
+  }
+}

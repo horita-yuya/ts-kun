@@ -1,0 +1,22 @@
+{
+  "name": "ts-kun",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:horita-yuya/ts-kun",
+  "author": "horita-yuya <horitayuya@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "yarn workspace ts-kun dev",
+    "example": "yarn workspace ts-kun-example start"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@types/node": "^22.5.2"
+  }
+}
