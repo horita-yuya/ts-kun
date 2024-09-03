@@ -8,3 +8,5 @@ export type Post = {
   title: string;
   content: string;
 };
+
+export declare function validateUser(input: unknown): input is User;

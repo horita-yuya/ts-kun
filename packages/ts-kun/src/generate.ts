@@ -90,31 +90,47 @@ export function generate(filePath: string) {
 }
 
 function makeValidationFunction(entities: Entity[]) {
+  const functionDeclarations = entities.map((entity) => {
+    const functionName = `validate${entity.name}`;
+    return ts.factory.createFunctionDeclaration(
+      undefined,
+      undefined,
+      functionName,
+      undefined,
+      [ts.factory.createParameterDeclaration(undefined, undefined, "input")],
+      undefined,
+      ts.factory.createBlock([
+        ts.factory.createVariableStatement(
+          undefined,
+          ts.factory.createVariableDeclarationList([
+            ts.factory.createVariableDeclaration(
+              "hoge",
+              undefined,
+              undefined,
+              ts.factory.createNumericLiteral(1),
+            ),
+          ]),
+        ),
+        ts.factory.createReturnStatement(ts.factory.createTrue()),
+      ]),
+    );
+  });
+
+  const exportAssignments = entities.map((entity) => {
+    return ts.factory.createExpressionStatement(
+      ts.factory.createBinaryExpression(
+        ts.factory.createPropertyAccessExpression(
+          ts.factory.createIdentifier("exports"),
+          `validate${entity.name}`,
+        ),
+        ts.SyntaxKind.EqualsToken,
+        ts.factory.createIdentifier(`validate${entity.name}`),
+      ),
+    );
+  });
+
   return ts.factory.createSourceFile(
-    entities.map((entity) => {
-      return ts.factory.createFunctionDeclaration(
-        [ts.factory.createToken(ts.SyntaxKind.ExportKeyword)],
-        undefined,
-        `validate${entity.name}`,
-        undefined,
-        [ts.factory.createParameterDeclaration(undefined, undefined, "input")],
-        undefined,
-        ts.factory.createBlock([
-          ts.factory.createVariableStatement(
-            [ts.factory.createModifier(ts.SyntaxKind.ConstKeyword)],
-            ts.factory.createVariableDeclarationList([
-              ts.factory.createVariableDeclaration(
-                "hoge",
-                undefined,
-                undefined,
-                ts.factory.createNumericLiteral(1),
-              ),
-            ]),
-          ),
-          ts.factory.createReturnStatement(ts.factory.createTrue()),
-        ]),
-      );
-    }),
+    [...functionDeclarations, ...exportAssignments],
     ts.factory.createToken(ts.SyntaxKind.EndOfFileToken),
     ts.NodeFlags.None,
   );
