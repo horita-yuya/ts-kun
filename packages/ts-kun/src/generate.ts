@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import * as path from "node:path";
 import * as ts from "typescript";
 
 type Entity = {
@@ -74,8 +75,29 @@ export function generate(filePath: string) {
     makeValidationFunction(entities),
     resultFile,
   );
+  console.log(result);
 
-  fs.writeFileSync(filePath.replace(".ts", ".js"), result);
+  const functions = [];
+  const exports = [];
+  for (const entity of entities) {
+    const isObject = `typeof input === "object" && input !== null`;
+    const hasMembers = entity.members.map((member) => {
+      return `input.${member.name} !== undefined`;
+    });
+    const condition = `${isObject} && ${hasMembers.join(" && ")}`;
+    const functionExpression = `function validate${entity.name}(input) { return ${condition} }`;
+    const exportExpression = `exports.validate${entity.name} = validate${entity.name};`;
+
+    functions.push(functionExpression);
+    exports.push(exportExpression);
+  }
+
+  const js = `
+${functions.join("\n")}
+${exports.join("\n")}
+  `;
+
+  fs.writeFileSync(filePath.replace(".ts", ".js"), js);
 }
 
 function makeValidationFunction(entities: Entity[]) {
@@ -118,20 +140,7 @@ function makeValidationFunction(entities: Entity[]) {
       undefined,
       [ts.factory.createParameterDeclaration(undefined, undefined, "input")],
       undefined,
-      ts.factory.createBlock([
-        ts.factory.createVariableStatement(
-          undefined,
-          ts.factory.createVariableDeclarationList([
-            ts.factory.createVariableDeclaration(
-              "hoge",
-              undefined,
-              undefined,
-              ts.factory.createNumericLiteral(1),
-            ),
-          ]),
-        ),
-        returnStatement,
-      ]),
+      ts.factory.createBlock([returnStatement]),
     );
   });
 
