@@ -9,7 +9,8 @@
   "workspaces": ["packages/*"],
   "scripts": {
     "dev": "yarn workspace ts-kun dev",
-    "example": "yarn workspace ts-kun-example start"
+    "s": "yarn workspace ts-kun-example start",
+    "t": "yarn workspace ts-kun-example t"
   },
   "dependencies": {
     "ts-node": "^10.9.2",

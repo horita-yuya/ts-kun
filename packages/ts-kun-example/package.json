@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "ts-node init.ts && ts-node index.ts",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "t": "ts-node t.ts"
   }
 }
