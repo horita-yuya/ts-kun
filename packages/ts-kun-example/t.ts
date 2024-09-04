@@ -2,7 +2,7 @@ import * as path from "node:path";
 import * as ts from "typescript";
 
 function t() {
-  const file = path.resolve(__dirname, "t_sample.ts");
+  const file = path.resolve(__dirname, "t-sample.ts");
   const program = ts.createProgram([file], {
     declaration: true,
     emitDeclarationOnly: true,
@@ -13,20 +13,17 @@ function t() {
     throw new Error(`No source file: ${file}`);
   }
 
-  showSyntaxTree(source, "");
-
-  const result = program.emit();
-  console.log(result);
+  showSyntaxTree(source, "", source);
 }
 
-function showSyntaxTree(node: ts.Node, indent: string) {
-  console.log(`${indent}${showNodeDetail(node)}`);
+function showSyntaxTree(node: ts.Node, indent: string, source: ts.SourceFile) {
+  console.log(`${indent}${showNodeDetail(node, source)}`);
   ts.forEachChild(node, (child) => {
-    showSyntaxTree(child, indent + "  ");
+    showSyntaxTree(child, indent + "  ", source);
   });
 }
 
-function showNodeDetail(node: ts.Node): string {
+function showNodeDetail(node: ts.Node, source: ts.SourceFile): string {
   const kind = ts.SyntaxKind[node.kind];
 
   if (ts.isIdentifier(node)) {
@@ -34,6 +31,8 @@ function showNodeDetail(node: ts.Node): string {
   } else if (ts.isTypeLiteralNode(node)) {
     return `${kind}`;
   } else if (ts.isPropertySignature(node)) {
+    return `${kind}`;
+  } else if (ts.isTemplateLiteralTypeNode(node)) {
     return `${kind}`;
   }
 
