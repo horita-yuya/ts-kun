@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node init.ts && ts-node index.ts",
     "watch": "tsc -w"
   }
 }

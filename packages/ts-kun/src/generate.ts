@@ -82,7 +82,7 @@ export function generate(filePath: string) {
   for (const entity of entities) {
     const isObject = `typeof input === "object" && input !== null`;
     const hasMembers = entity.members.map((member) => {
-      return `input.${member.name} !== undefined`;
+      return `typeof input.${member.name} === "${member.kind}"`;
     });
     const condition = `${isObject} && ${hasMembers.join(" && ")}`;
     const functionExpression = `function validate${entity.name}(input) { return ${condition} }`;
