@@ -27,7 +27,10 @@ export function searchDeclaredObjectTypes(
               }
 
               if (member.type && ts.isTypeNode(member.type)) {
-                if (member.type.kind === ts.SyntaxKind.StringKeyword) {
+                if (
+                  member.type.kind === ts.SyntaxKind.StringKeyword ||
+                  member.type.kind === ts.SyntaxKind.NumberKeyword
+                ) {
                   type[key] = [member.type.getText(source)];
                 }
 
