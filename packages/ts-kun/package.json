@@ -19,5 +19,8 @@
   "types": "./src/generateValidation.ts",
   "scripts": {
     "dev": "tsc -w"
+  },
+  "dependencies": {
+    "typescript": "^5.5.4"
   }
 }
