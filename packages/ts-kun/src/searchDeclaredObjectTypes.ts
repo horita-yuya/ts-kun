@@ -20,29 +20,32 @@ export function searchDeclaredObjectTypes(
           const type: { [key: string]: string[] } = {};
 
           for (const member of node.members) {
-            console.log(`TEST ${member.name}`);
-            let key = "";
-            const value: string[] = [];
-            member.forEachChild((memberChild) => {
-              if (ts.isIdentifier(memberChild)) {
-                key = memberChild.text;
-              } else if (memberChild.kind === ts.SyntaxKind.StringKeyword) {
-                value.push(memberChild.getText(source));
-              } else if (ts.isUnionTypeNode(memberChild)) {
-                const unions: string[] = [];
-                memberChild.forEachChild((union) => {
-                  if (ts.isLiteralTypeNode(union)) {
-                    if (ts.isStringLiteralLike(union.literal)) {
-                      unions.push(union.literal.text);
+            if (ts.isPropertySignature(member)) {
+              let key = "";
+              if (ts.isIdentifier(member.name)) {
+                key = member.name.text;
+              }
+
+              if (member.type && ts.isTypeNode(member.type)) {
+                if (member.type.kind === ts.SyntaxKind.StringKeyword) {
+                  type[key] = [member.type.getText(source)];
+                }
+
+                if (ts.isUnionTypeNode(member.type)) {
+                  const unions: string[] = [];
+                  for (const union of member.type.types) {
+                    if (ts.isLiteralTypeNode(union)) {
+                      if (ts.isStringLiteralLike(union.literal)) {
+                        unions.push(union.literal.text);
+                      }
                     }
                   }
-                });
-                value.push(...unions);
+                  type[key] = unions;
+                }
               }
-            });
-            type[key] = value;
+            }
           }
-          types.push({ name, type });
+          types.push({ name, properties: type });
         }
       });
     }

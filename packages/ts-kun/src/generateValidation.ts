@@ -3,16 +3,16 @@ import { createValidationSourceCode } from "./createValidationSourceCode";
 import type { DeclaredObjectType } from "./declaredType";
 import { searchDeclaredObjectTypes } from "./searchDeclaredObjectTypes";
 
-export function generate({
-  fileNames,
-  outFile,
-}: { fileNames: string[]; outFile: string }) {
+export function generateValidation({
+  inputFilePaths,
+  outFilePath,
+}: { inputFilePaths: string[]; outFilePath: string }) {
   const host = ts.createCompilerHost({
     declaration: true,
   });
 
   const program = ts.createProgram(
-    fileNames,
+    inputFilePaths,
     {
       declaration: true,
     },
@@ -21,18 +21,18 @@ export function generate({
 
   const allDeclarationTypes: DeclaredObjectType[] = [];
 
-  for (const fileName of fileNames) {
+  for (const fileName of inputFilePaths) {
     const source = program.getSourceFile(fileName);
     if (!source) {
       console.error(`No source file: ${fileName}`);
       continue;
     }
 
-    allDeclarationTypes.concat(searchDeclaredObjectTypes(source));
+    allDeclarationTypes.push(...searchDeclaredObjectTypes(source));
   }
 
   host.writeFile(
-    outFile,
+    outFilePath,
     createValidationSourceCode(allDeclarationTypes),
     false,
   );

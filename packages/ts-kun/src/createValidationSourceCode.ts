@@ -1,5 +1,6 @@
 import * as ts from "typescript";
 import { createLogicalAndAll } from "./createLogicalAndAll";
+import { createLogicalOrAll } from "./createLogicalOrAll";
 import type { DeclaredObjectType } from "./declaredType";
 
 const PARAM_TYPE = "type";
@@ -95,14 +96,50 @@ export function createValidationSourceCode(
                             ts.factory.createIdentifier(PARAM_VALUE),
                             ts.factory.createNull(),
                           ),
-                          ...Object.entries(type.type).map(([key, value]) => {
-                            return ts.factory.createStrictEquality(
-                              ts.factory.createTypeOfExpression(
-                                ts.factory.createIdentifier(key),
-                              ),
-                              ts.factory.createStringLiteral(value[0]),
-                            );
-                          }),
+                          ...Object.keys(type.properties).map(
+                            (propertyName) => {
+                              return ts.factory.createBinaryExpression(
+                                ts.factory.createStringLiteral(propertyName),
+                                ts.SyntaxKind.InKeyword,
+                                ts.factory.createIdentifier(PARAM_VALUE),
+                              );
+                            },
+                          ),
+                          ...Object.entries(type.properties).map(
+                            ([propertyName, propertyTypes]) => {
+                              if (propertyTypes.length === 1) {
+                                return ts.factory.createStrictEquality(
+                                  ts.factory.createTypeOfExpression(
+                                    ts.factory.createPropertyAccessExpression(
+                                      ts.factory.createIdentifier(PARAM_VALUE),
+                                      ts.factory.createIdentifier(propertyName),
+                                    ),
+                                  ),
+                                  ts.factory.createStringLiteral(
+                                    propertyTypes[0],
+                                  ),
+                                );
+                              } else {
+                                return createLogicalOrAll(
+                                  propertyTypes.map((propertyType) => {
+                                    return ts.factory.createStrictEquality(
+                                      ts.factory.createPropertyAccessExpression(
+                                        ts.factory.createIdentifier(
+                                          PARAM_VALUE,
+                                        ),
+                                        ts.factory.createIdentifier(
+                                          propertyName,
+                                        ),
+                                      ),
+                                      ts.factory.createStringLiteral(
+                                        propertyType,
+                                      ),
+                                    );
+                                  }),
+                                );
+                              }
+                            },
+                          ),
                         ]),
                       ),
                     ],

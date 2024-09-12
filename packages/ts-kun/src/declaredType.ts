@@ -1,4 +1,4 @@
 export type DeclaredObjectType = {
   name: string;
-  type: { [key: string]: string[] };
+  properties: { [key: string]: string[] };
 };

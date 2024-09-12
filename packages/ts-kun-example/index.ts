@@ -1,13 +1,10 @@
-import { validate } from "./generated-t-sample";
+import * as path from "node:path";
+import { generateValidation } from "ts-kun";
 
-console.log(validate("User", {}));
-console.log(validate(null));
-console.log(validate(undefined));
-
-const hoge = {};
-
-let k: User;
-
-if (validate("User", hoge)) {
-  hoge.name;
-}
+generateValidation({
+  inputFilePaths: [
+    path.resolve(__dirname, "samples", "sampleUser1.ts"),
+    path.resolve(__dirname, "samples", "sampleUser2.ts"),
+  ],
+  outFilePath: path.resolve(__dirname, "samples", "sampleValidate.ts"),
+});

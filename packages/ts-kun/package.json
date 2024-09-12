@@ -16,7 +16,7 @@
       }
     }
   },
-  "types": "./src/generate.ts",
+  "types": "./src/generateValidation.ts",
   "scripts": {
     "dev": "tsc -w"
   }

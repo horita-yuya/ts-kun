@@ -5,8 +5,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "ts-node init.ts && ts-node index.ts",
-    "watch": "tsc -w",
-    "t": "ts-node t.ts"
+    "gen": "ts-node index.ts",
+    "test": "node --import tsx --test samples/*.test.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.19.1"
   }
 }
