@@ -1,5 +1,8 @@
 type User = {
   name: string;
+  plan: "free" | "pro";
 };
 
-type User2 = "123";
+type PremiumUser = {
+  service: string;
+};

@@ -1,22 +1,13 @@
-import { validateUser } from "./src/sample";
+import { validate } from "./generated-t-sample";
 
-const user1 = {
-  id: 1,
-};
+console.log(validate("User", {}));
+console.log(validate(null));
+console.log(validate(undefined));
 
-const user2 = {
-  id: "1",
-  name: "John",
-};
+const hoge = {};
 
-const user3 = {
-  id: 1,
-  name: "John",
-};
+let k: User;
 
-console.log(validateUser({}));
-console.log(validateUser(null));
-console.log(validateUser(undefined));
-console.log(validateUser(user1));
-console.log(validateUser(user2));
-console.log(validateUser(user3));
+if (validate("User", hoge)) {
+  hoge.name;
+}
