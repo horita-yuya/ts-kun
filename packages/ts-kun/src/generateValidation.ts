@@ -20,6 +20,7 @@ export function generateValidation({
   );
 
   const allDeclarationTypes: DeclaredObjectType[] = [];
+  const typeAliasDeclarations: ts.TypeAliasDeclaration[] = [];
 
   for (const fileName of inputFilePaths) {
     const source = program.getSourceFile(fileName);
@@ -28,12 +29,18 @@ export function generateValidation({
       continue;
     }
 
+    source.forEachChild((child) => {
+      if (ts.isTypeAliasDeclaration(child)) {
+        typeAliasDeclarations.push(child);
+      }
+    });
+
     allDeclarationTypes.push(...searchDeclaredObjectTypes(source));
   }
 
   host.writeFile(
     outFilePath,
-    createValidationSourceCode(allDeclarationTypes),
+    createValidationSourceCode(allDeclarationTypes, typeAliasDeclarations),
     false,
   );
 }

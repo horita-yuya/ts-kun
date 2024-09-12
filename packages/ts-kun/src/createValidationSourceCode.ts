@@ -29,6 +29,7 @@ function createMapperTypeDeclaration(
 
 export function createValidationSourceCode(
   declaredObjectTypes: DeclaredObjectType[],
+  currentTypeAliasDeclarations: ts.TypeAliasDeclaration[],
 ): string {
   const tmpSource = ts.createSourceFile("", "", ts.ScriptTarget.ESNext);
   const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
@@ -37,6 +38,7 @@ export function createValidationSourceCode(
     ts.EmitHint.Unspecified,
     ts.factory.createSourceFile(
       [
+        ...currentTypeAliasDeclarations,
         createMapperTypeDeclaration(declaredObjectTypes),
         ts.factory.createFunctionDeclaration(
           [ts.factory.createToken(ts.SyntaxKind.ExportKeyword)],
