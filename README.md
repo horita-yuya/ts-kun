@@ -25,6 +25,15 @@ type SampleUser2 = {
 ts-kun will generate the following functions.
 
 ```typescript
+type SampleUser1 = {
+  name: string;
+  plan: "free" | "pro";
+};
+type SampleUser2 = {
+  id: string;
+  age: number;
+  email: string;
+};
 type Mapper = {
   SampleUser1: SampleUser1;
   SampleUser2: SampleUser2;
@@ -48,8 +57,10 @@ export function validate<T extends keyof Mapper>(
         typeof value === "object" &&
         value !== null &&
         "id" in value &&
+        "age" in value &&
         "email" in value &&
         typeof value.id === "string" &&
+        typeof value.age === "number" &&
         typeof value.email === "string"
       );
   }
